@@ -1,0 +1,10 @@
+
+Linear feedback shift register XOR
+encryption byte at a time alternating stop and go generator
+galois configuration
+
+ie encryption of plain text ascii to a cypher text and
+decryption symetric key 
+
+written in GNU as most likely becuase of the 32 bit limitation 
+on this compiler

@@ -1,0 +1,8 @@
+
+here we will write a C program that
+schedules an index file with filenames of
+flat files for records of a database
+filenames will be randomly generated
+and keys will be associated with the record filename
+using random access file IO of the standard runtime
+library.
