@@ -11,7 +11,7 @@ main(int argc, char *argv[]){
 	}
 	i=atol(argv[1]);
 	j=atol(argv[2]);
-	if(argv[1]==0|argv[2]==0){
+	if(i==0||j==0){
 		return 2;
 	}
 	printf("%X\n", i/j);
