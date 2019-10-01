@@ -1,5 +1,5 @@
 #!/bin/bash
-name answer
+
 echo -n enter first number:
 read one
 echo -n enter second number:
@@ -10,13 +10,15 @@ answer=`expr $one + $two`
 echo -n multiplied:
 ./multiply $one $two
 
-echo true value loops once
+
+echo enter a value 0 is false 
 read ans
 while [ $ans -gt 0 ] 
 do
 	echo false value leaves loop
-	read ans
+
 	answer=`./squared $answer`
 	echo $answer
+	ans=`expr $ans - 1`
 done
 
