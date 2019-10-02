@@ -30,8 +30,6 @@ main(int argc, char *argv[]){
         printf("enter record text below:\n");
         do {
                 input = getchar();
-                if(input == '\n')
-                        fputc('\n', record);
                 fputc(input, record);
         } while ( input != '$' );
         
