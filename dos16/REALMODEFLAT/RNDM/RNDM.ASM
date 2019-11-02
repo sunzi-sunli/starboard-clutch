@@ -12,9 +12,20 @@ MyStack         ENDS
 
 MyData          SEGMENT
 
-numeric         DB      "1234567890",'$'
+OUTPUT          DB      ?
+inputcount      DW      5
+numeric         DB      "0123456789ABCDEF",'$'
 CRLF            DB      00H,0AH,'$'
 success         DB      "program succeeded",13,10,'$'
+seed            DW      0
+loopcount       DW      0
+ones            DW      1
+tens            DW      10
+hundreds        DW      100
+thousands       DW      1000
+tenthousands    DW      10000
+collect         DW      0
+jran            DW      0
 
 MyData          ENDS
 
@@ -32,12 +43,37 @@ Start:          ; This is where program execution begins
                 mov DS,AX
                 ; above is boiler plate
 
-                mov BX,12
-                mov CX,131
-                call Modulus
+                mov inputcount,5
+       input:
+                mov AH,01H
+                int 21H
+                call ProcessInput
+                mov CX,AX
+                mov BX,inputcount
+                call SumColumn
+                add collect,AX
+                dec inputcount
+                cmp inputcount,0
+                ja input
 
-                cmp AX,11
-                je correct
+                mov AX,collect
+                mov seed,AX
+                call FirstTerm
+                mov CX,seed
+                call Modulus
+                mov seed,AX
+                
+                mov SI,OFFSET OUTPUT
+                mov AX,seed
+                call Word2Str
+
+                mov DL,[OUTPUT]
+                mov AH,06H
+                int 21H
+
+                mov dl,[OUTPUT+1]
+                mov AH,06H
+                int 21H
 
                 mov AH,4CH
                 mov AL,1
@@ -70,6 +106,150 @@ Start:          ; This is where program execution begins
 
  Modulus        ENDP
 
+ FirstTerm      PROC
+
+                mov BX,31104
+                mov CX,625
+                mov DX,6571
+                mov AX,CX
+                pop CX
+                mov loopcount,CX
+     mult:      add seed,CX
+                dec loopcount
+                cmp loopcount,0
+                jnz mult
+                add seed,DX
+                ret
+
+ FirstTerm      ENDP
+
+ ProcessInput   PROC
+
+                cmp AL,'0'
+                jmp zero
+                cmp AL,'1'
+                jmp one
+                cmp AL,'2'
+                jmp two
+                cmp AL,'3'
+                jmp three
+                cmp AL,'4'
+                jmp four
+                cmp AL,'5'
+                jmp five
+                cmp AL,'6'
+                jmp six
+                cmp AL,'7'
+                jmp seven
+                cmp AL,'8'
+                jmp eight
+                cmp AL,'9'
+                jmp nine
+
+        zero:   mov AX,0
+                ret
+        one:    mov AX,1
+                ret
+        two:    mov AX,2
+                ret
+        three:  mov AX,3
+                ret
+        four:   mov AX,4
+                ret
+        five:   mov AX,5
+                ret
+        six:    mov AX,6
+                ret
+        seven:  mov AX,7
+                ret
+        eight:  mov AX,8
+                ret
+        nine:   mov AX,9
+                ret
+
+                
+ ProcessInput   ENDP
+                ; set BX to the column number of input
+                ; set CX to the ascii byte actual value
+ SumColumn      PROC
+
+                mov AX,0
+                cmp BX,5
+                je tagone
+                cmp BX,4
+                je tagtwo
+                cmp BX,3
+                je tagthree
+                cmp BX,2
+                je tagfour
+                cmp BX,1
+                je tagfive
+
+
+    tagone:     mov loopcount,CX
+    tenthous:   add AX,tenthousands
+                dec loopcount
+                cmp loopcount,0
+                ja tenthous
+                ret
+
+    tagtwo:     mov loopcount,CX
+    thous:      add AX,thousands
+                dec loopcount
+                cmp loopcount,0
+                ja thous
+                ret
+
+    tagthree:   mov loopcount,CX
+    hund:       add AX,hundreds
+                dec loopcount
+                cmp loopcount,0
+                ja hund
+                ret
+
+    tagfour:    mov loopcount,CX
+    tns:        add AX,tens
+                dec loopcount
+                cmp loopcount,0
+                ja tns
+                ret
+
+    tagfive:    mov loopcount,CX
+    units:      add AX,ones
+                dec loopcount
+                cmp loopcount,0
+                ja units
+                ret
+
+ SumColumn      ENDP
+
+ Byte2Str       PROC
+                mov DI,AX
+                and DI,000FH
+                mov BX,OFFSET numeric
+                mov AH,BYTE PTR [BX+DI]
+                mov [SI+1],AH
+                xor AH,AH
+                mov DI,AX
+                shr DI,1
+                shr DI,1
+                shr DI,1
+                shr DI,1
+                mov AH,BYTE PTR [BX+DI]
+                mov [SI],AH
+                RET
+ Byte2Str       ENDP
+
+
+ Word2Str       PROC
+                mov CX,AX
+                xchg AH,AL
+                call Byte2Str
+                add SI,2
+                mov AX,CX
+                call Byte2Str
+                ret
+ Word2Str       ENDP
 
 ; ############# END PROCEDURE SECTION
 
