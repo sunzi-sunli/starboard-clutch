@@ -49,30 +49,30 @@ Start:          ; This is where program execution begins
                 int 21H
                 call ProcessInput
                 mov CX,AX
-                mov BX,inputcount
+                mov BX,[inputcount]
                 call SumColumn
-                add collect,AX
+                add [collect],AX
                 dec [inputcount]
                 cmp [inputcount],0
                 jnz input
 
-                mov AX,collect
-                mov seed,AX
+                mov AX,[collect]
+                mov [seed],AX
                 call FirstTerm
-                mov CX,seed
+                mov CX,[seed]
                 call Modulus
-                mov seed,AX
+                mov [seed],AX
                 
                 mov AH,BYTE PTR OUTPUT
                 mov [SI],AH
-                mov AX,seed
+                mov AX,[seed]
                 call Word2Str
 
                 mov DL,[OUTPUT]
                 mov AH,06H
                 int 21H
 
-                mov dl,[OUTPUT+1]
+                mov DL,[OUTPUT+1]
                 mov AH,06H
                 int 21H
 
@@ -115,11 +115,11 @@ Start:          ; This is where program execution begins
                 mov AX,CX
                 pop CX
                 mov [loopcount],CX
-     mult:      add seed,CX
+     mult:      add [seed],CX
                 dec [loopcount]
                 cmp [loopcount],0
                 jnz mult
-                add seed,DX
+                add [seed],DX
                 ret
 
  FirstTerm      ENDP
@@ -188,35 +188,35 @@ Start:          ; This is where program execution begins
 
 
     tagone:     mov [loopcount],CX
-    tenthous:   add AX,tenthousands
+    tenthous:   add AX,[tenthousands]
                 dec [loopcount]
                 cmp [loopcount],0
                 ja tenthous
                 ret
 
     tagtwo:     mov [loopcount],CX
-    thous:      add AX,thousands
+    thous:      add AX,[thousands]
                 dec [loopcount]
                 cmp [loopcount],0
                 ja thous
                 ret
 
     tagthree:   mov [loopcount],CX
-    hund:       add AX,hundreds
+    hund:       add AX,[hundreds]
                 dec [loopcount]
                 cmp [loopcount],0
                 ja hund
                 ret
 
     tagfour:    mov [loopcount],CX
-    tns:        add AX,tens
+    tns:        add AX,[tens]
                 dec [loopcount]
                 cmp [loopcount],0
                 ja tns
                 ret
 
     tagfive:    mov [loopcount],CX
-    units:      add AX,ones
+    units:      add AX,[ones]
                 dec [loopcount]
                 cmp [loopcount],0
                 ja units
